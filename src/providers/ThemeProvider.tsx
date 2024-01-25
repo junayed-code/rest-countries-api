@@ -8,7 +8,10 @@ type ThemeProviderValues = {
   toggleTheme: (theme?: Theme) => void;
 };
 
-export const ThemeContext = createContext<ThemeProviderValues>();
+export const ThemeContext = createContext<ThemeProviderValues>({
+  theme: "dark",
+  toggleTheme: () => {},
+});
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<Theme>("light");
