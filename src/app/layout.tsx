@@ -4,7 +4,6 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import ThemeProvider from "@/providers/ThemeProvider";
-import config from "@/config";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],

@@ -1,9 +1,7 @@
-import fs from "fs/promises";
-
 export default async function loadCountriesData(): Promise<any[]> {
-  const dataString = await fs.readFile(
-    `${process.cwd()}/app/data.json`,
-    "utf-8"
-  );
-  return JSON.parse(dataString);
+  const res = await fetch("https://restcountries.com/v3.1/all", {
+    cache: "force-cache",
+  });
+  const data = res.json();
+  return data;
 }
