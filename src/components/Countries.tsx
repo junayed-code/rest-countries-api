@@ -1,17 +1,16 @@
 import slugify from "slugify";
 import Link from "next/link";
-import config from "@/config";
+import getCountries from "@/utils/getCountries";
 
 type Props = {
   searchParams: { page?: string; region?: string; search?: string };
 };
 
 async function Countries({ searchParams }: Props) {
-  const { page = "1", region = "", search = "" } = searchParams;
-
-  const query = `?limit=12&page=${page}&region=${region}&search=${search}`;
-  const res = await fetch(`${config.BASE_URL}/api/countries${query}`);
-  const countries: any[] = await res.json();
+  const countries = await getCountries({
+    ...searchParams,
+    limit: 12,
+  });
 
   return (
     <div className="grid gap-8 md:gap-14 xl:gap-7 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-12 justify-items-center">
@@ -23,7 +22,9 @@ async function Countries({ searchParams }: Props) {
 }
 
 function CountryCard({ country }: { country: any }) {
-  const slug = slugify(country.name, { lower: true, trim: true });
+  const name = country.name?.common;
+
+  const slug = slugify(name, { lower: true, trim: true });
   return (
     <Link
       href={`/country/${slug}`}
@@ -36,7 +37,7 @@ function CountryCard({ country }: { country: any }) {
         />
       </figure>
       <div className="px-5 py-6">
-        <h3 className="text-xl font-bold mb-4">{country.name}</h3>
+        <h3 className="text-xl font-bold mb-4">{name}</h3>
         <p className="font-semibold">
           Population:{" "}
           <span className="font-normal text-gray-600 dark:text-slate-300">
