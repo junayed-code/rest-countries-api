@@ -2,6 +2,8 @@ import Countries from "@/components/Countries";
 import CountryQuery from "@/components/CountryQuery";
 import { Suspense } from "react";
 
+export const dynamic = "auto";
+
 type Props = {
   params: any;
   searchParams: { page?: string; region?: string; search?: string };
