@@ -9,7 +9,7 @@ export default {
     "Afghanistan",
     "France",
     "Germany",
-    "United Kingdom of Great Britain and Northern Ireland",
-    "United States of America",
+    "United Kingdom",
+    "United States",
   ],
 };
