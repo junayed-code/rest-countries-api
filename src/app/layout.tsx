@@ -12,7 +12,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(config.BASE_URL),
+  metadataBase: new URL("https://countryquery.vercel.app"),
   title: "REST Countries API with color theme switcher",
   description:
     "This is the solution to REST countries API with color theme switcher challenge by Junayed Akbor on Frontend Mentor.",
