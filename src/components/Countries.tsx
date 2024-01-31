@@ -1,22 +1,38 @@
 import slugify from "slugify";
 import Link from "next/link";
-import getCountries from "@/utils/getCountries";
+import Pagination from "./Pagination";
+import getCountries from "@/utils/api/getCountries";
+import numberFormate from "@/utils/numberFormate";
+
+const COUNTRIES_PER_PAGE = 12;
 
 type Props = {
   searchParams: { page?: string; region?: string; search?: string };
 };
 
 async function Countries({ searchParams }: Props) {
-  const countries = await getCountries({
+  const { totalLenght, data: countries } = await getCountries({
     ...searchParams,
-    limit: 12,
+    limit: COUNTRIES_PER_PAGE,
   });
+  const totalPageNum = Math.ceil(totalLenght / COUNTRIES_PER_PAGE);
 
   return (
-    <div className="grid gap-8 md:gap-14 xl:gap-7 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-12 justify-items-center">
-      {countries.map(country => (
-        <CountryCard key={country.name} country={country} />
-      ))}
+    <div>
+      <div className="mb-12 grid gap-8 md:gap-14 xl:gap-7 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center">
+        {countries.map(country => (
+          <CountryCard key={country.name} country={country} />
+        ))}
+        {countries?.length === 0 && (
+          <h3 className="text-3xl font-bold col-span-full text-center">
+            No Countries Found!
+          </h3>
+        )}
+      </div>
+      <Pagination
+        currentPage={searchParams.page || 1}
+        lastPage={countries?.length && totalPageNum}
+      />
     </div>
   );
 }
@@ -41,9 +57,7 @@ function CountryCard({ country }: { country: any }) {
         <p className="font-semibold">
           Population:{" "}
           <span className="font-normal text-gray-600 dark:text-slate-300">
-            {country.population < 1000000
-              ? country.population
-              : `${(country.population / 1000000).toFixed(2)}M`}
+            {numberFormate(country.population)}
           </span>
         </p>
         <p className="font-semibold">

@@ -13,7 +13,7 @@ function CountryQuery() {
   const handleSearch = useDebounce((e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "") params.delete("search");
     else params.set("search", e.target.value);
-
+    params.delete("page");
     replace(`?${params.toString()}`);
   }, 350);
 
@@ -21,7 +21,7 @@ function CountryQuery() {
     if (e.target.value !== "") {
       params.set("region", e.target.value);
     } else params.delete("region");
-
+    params.delete("page");
     push(`?${params.toString()}`);
   };
 

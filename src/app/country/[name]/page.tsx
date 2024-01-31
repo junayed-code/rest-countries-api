@@ -1,7 +1,11 @@
-import BackButton from "@/components/BackButton";
-import config from "@/config";
-import getCountryByName from "@/utils/getCountryByName";
 import slugify from "slugify";
+import config from "@/config";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import BackButton from "@/components/BackButton";
+import getCountryByName from "@/utils/api/getCountryByName";
+import getCountriesByCodes from "@/utils/api/getCountriesByCodes";
+import numberFormate from "@/utils/numberFormate";
 
 type Props = {
   params: { name: string };
@@ -14,7 +18,9 @@ export function generateStaticParams() {
 }
 
 async function CountryDetailsPage({ params }: Props) {
-  const country = await getCountryByName(params.name);
+  const country = await getCountryByName(params.name.replace(/-/g, " "));
+  if (!country) return notFound();
+
   const countryName = country.name?.common;
   const nativeName = Object.values<{ common: string }>(
     country.name?.nativeName
@@ -22,6 +28,13 @@ async function CountryDetailsPage({ params }: Props) {
   const currencies = Object.values<{ name: string }>(country.currencies)?.[0]
     .name;
   const languages = Object.values(country.languages);
+
+  const borderCountries = (
+    await getCountriesByCodes({
+      codes: country.borders,
+      fields: ["name"],
+    })
+  ).map(country => country.name?.common);
 
   return (
     <>
@@ -51,7 +64,7 @@ async function CountryDetailsPage({ params }: Props) {
               <p className="font-semibold">
                 Population:{" "}
                 <span className="font-normal text-gray-600 dark:text-slate-300">
-                  {country.population}
+                  {numberFormate(country.population)}
                 </span>
               </p>
               <p className="font-semibold">
@@ -96,17 +109,18 @@ async function CountryDetailsPage({ params }: Props) {
             </div>
           </div>
 
-          {country.borders?.length > 0 && (
+          {borderCountries?.length > 0 && (
             <p className="font-semibold mt-10 flex flex-wrap items-center gap-3">
               <span>Border Countries:</span>
               <span className="font-normal flex flex-wrap gap-2 ml-1">
-                {country.borders.map((border: string) => (
-                  <span
-                    key={border}
-                    className="inline-block rounded-sm px-4 py-1 shadow-[0_0_10px_-2px] shadow-black/30 bg-white dark:bg-slate-700 dark:text-slate-50"
+                {borderCountries.map((name: string) => (
+                  <Link
+                    href={`/country/${slugify(name, { lower: true })}`}
+                    key={name}
+                    className="inline-block rounded-sm px-4 py-1 shadow-[0_0_10px_-2px] shadow-black/30 bg-white dark:bg-slate-700 dark:text-slate-50 cursor-pointer"
                   >
-                    {border}
-                  </span>
+                    {name}
+                  </Link>
                 ))}
               </span>
             </p>
