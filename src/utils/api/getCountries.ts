@@ -1,4 +1,4 @@
-import loadCountriesData from "./loadCountriesData";
+import config from "@/config";
 
 type Query = {
   page?: number | string;
@@ -12,14 +12,16 @@ export default async function getCountries({
   search,
   limit,
   page,
-}: Query): Promise<any[]> {
-  let data: any[] = await loadCountriesData();
+}: Query): Promise<{ totalLenght: number; data: any[] }> {
+  let BASE_URL = config.REST_COUNTRIES_API;
 
   if (typeof region === "string" && region?.length > 3) {
-    data = data.filter(
-      country => country.region.toLowerCase() === region?.toLowerCase()
-    );
-  }
+    BASE_URL += `/region/${region}`;
+  } else BASE_URL += "/all";
+
+  let data: any[] = await fetch(BASE_URL, { cache: "force-cache" }).then(res =>
+    res.json()
+  );
 
   if (typeof search === "string" && search?.length > 2) {
     data = data.filter(
@@ -32,6 +34,7 @@ export default async function getCountries({
   const LIMIT = Number(limit || data.length) || 1;
   const PAGE = Number(page) || 1;
   const SKIP = (PAGE - 1) * LIMIT;
+  const DATA = data.slice(SKIP, SKIP + LIMIT);
 
-  return data.slice(SKIP, SKIP + LIMIT);
+  return { totalLenght: data.length, data: DATA };
 }
