@@ -1,5 +1,5 @@
 export default {
-  BASE_URL: process.env.VERCEL_URL || "http://localhost:3000",
+  REST_COUNTRIES_API: "https://restcountries.com/v3.1",
   FILTER_REGIONS: ["Africa", "Europe", "Americas", "Asia", "Oceania"],
   PREFETCH_COUNTRIES: [
     "Bangladesh",
